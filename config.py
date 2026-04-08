@@ -1,7 +1,13 @@
-# config.py
-# Authoritative sources are scraped directly by StructuredScoutAgent.
-# TARGET_URLS is kept for legacy compatibility but the new scout ignores it.
+"""
+What: Central configuration file for the Grant Discovery framework.
+Why: Separating these lists makes it safe and easy for non-technical users to update URLs, search domains, and strategic keywords without risking changes to the core application logic.
+How: Agents import these constants and iterate over them (e.g. alignment_agent uses NCC_STRATEGIC_KEYWORDS, scout_agent uses URLs and queries).
+"""
 
+# TARGET_URLS list
+# What: A list of legacy or non-API web sources for scraping.
+# Why: Authoritative sources are scraped directly by StructuredScoutAgent, but this array is kept for legacy compatibility and fallback use.
+# How: The scout ignores the URLs for IUK and UKRI, as they are hardcoded directly in the python logic, but reads these for supplementary sources.
 TARGET_URLS = [
     # IUK IFS — scraped directly (all pages of /competition/search)
     "https://apply-for-innovation-funding.service.gov.uk/competition/search",
@@ -11,11 +17,11 @@ TARGET_URLS = [
     "https://www.gov.uk/government/publications/defence-and-security-accelerator-dasa-open-call-for-innovation",
 ]
 
-# SEARCH_QUERIES: used ONLY for Horizon Europe targeted topic-ID searches.
-# The EU Funding & Tenders Portal API is directly integrated to discover topics.
-# This serves as the upstream opportunity source for projects that will eventually
-# be published on CORDIS (Community Research and Development Information Service).
-# IUK IFS and UKRI are scraped directly — no generic queries needed for those.
+# SEARCH_QUERIES list
+# What: Targeted domain searches used for the Horizon Europe topics.
+# Why: Standard web scraping is often blocked or generic, so we use precise site-specific strings for external APIs.
+# How: The EU Funding & Tenders Portal API natively integrates these keywords to discover specific topics instead of random links.
+# (Note: IUK IFS and UKRI are scraped directly — no generic queries needed for those).
 SEARCH_QUERIES = [
     "HORIZON-CL5-2026 site:ec.europa.eu/info/funding-tenders",
     "HORIZON-CL4-2026 site:ec.europa.eu/info/funding-tenders",
@@ -25,7 +31,10 @@ SEARCH_QUERIES = [
     "DASA open call innovation 2026 site:gov.uk",
 ]
 
-# Comprehensive list of keywords representing NCC's Strategic Pathways
+# NCC_STRATEGIC_KEYWORDS list
+# What: A comprehensive list of technical domains and themes representing NCC's Strategic Pathways.
+# Why: Evaluates whether a scraped grant is actually relevant to the NCC, filtering out noise.
+# How: Used by the StrategyAlignmentAgent. The code checks scraped grant titles and scope for matches against these exact phrases.
 NCC_STRATEGIC_KEYWORDS = [
     "Advanced Materials",
     "Composites",
@@ -64,7 +73,10 @@ NCC_STRATEGIC_KEYWORDS = [
     "Zero Emission Shipping",
 ]
 
-# Expanded list of target companies and key partners associated with NCC domains
+# TARGETED_COMPANIES list
+# What: A list of major industry players and key partners associated with NCC domains.
+# Why: Allows the platform to later flag grants if they mention these high-value partners.
+# How: Passed to the StrategyAlignmentAgent to detect corporate presence in the grant calls.
 TARGETED_COMPANIES = [
     "Airbus",
     "BAE Systems",

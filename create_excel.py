@@ -1,3 +1,8 @@
+"""
+What: Utility script to bootstrap the system by creating a fresh Excel dashboard.
+Why: If the Excel file is deleted or someone needs a fresh template loaded with pre-configured "seed" data, this script resets the base template.
+How: Generates a Pandas DataFrame using hardcoded `SEED_DATA` dictionaries, structures an "Instructions" tab, and saves to `Grant_Opportunities_Template_v2.xlsx`.
+"""
 import pandas as pd
 import os
 

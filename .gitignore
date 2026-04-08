@@ -14,6 +14,10 @@ __pycache__/
 
 # Data outputs & logs
 *.log
+*.txt
+!requirements.txt
+*.html
+*.pdf
 tmp_eu.json
 *.json
 # Exclude json unless explicitly needed

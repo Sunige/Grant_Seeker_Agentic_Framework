@@ -1,17 +1,28 @@
+"""
+What: An agent responsible for dynamically discovering new, unknown grant portals.
+Why: Reduces the maintenance burden by auto-updating the list of URLs in config.py if it finds a new permanent grant index using Serper (Google Search).
+How: Executes broad queries on Google, extracts the links, verifies they aren't already known, and then uses regex to rewrite `config.py` programmatically.
+"""
 import os
 import requests
 import json
 import re
 
 class DiscoveryAgent:
+    """
+    What: System agent for maintaining and expanding the source URL list.
+    Why: Allows the application to run semi-autonomously by discovering its own new sources.
+    How: Uses SERPER_API_KEY to search Google and appends results to config.py safely.
+    """
     def __init__(self, search_queries, existing_urls):
         self.search_queries = search_queries
         self.existing_urls = existing_urls
         
     def discover_and_add(self):
         """
-        Uses Serper to find new relevant links. 
-        If they aren't in existing_urls, it adds them to config.py for future routine checks.
+        What: The main routine to find and register new URLs.
+        Why: We want the framework to continuously grow its coverage over time without manual intervention.
+        How: Uses Serper API to perform google searches. Filters out any URLs already in `self.existing_urls` avoiding duplicates, then triggers `_update_config_py`.
         """
         api_key = os.environ.get("SERPER_API_KEY")
         if not api_key:
@@ -53,7 +64,9 @@ class DiscoveryAgent:
 
     def _update_config_py(self, new_links):
         """
-        Reads config.py, finds the TARGET_URLS list, and appends the new links, rewriting the file safely.
+        What: Helper routine that actually writes new links to disk.
+        Why: We need a persistent way to save dynamically discovered URLs so they aren't lost when the script stops.
+        How: Reads config.py as a raw string, uses regex to locate the exact `TARGET_URLS` array string block, injects the new URLs safely, and rewrites the file.
         """
         config_path = "config.py"
         try:

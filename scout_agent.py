@@ -1,3 +1,8 @@
+"""
+What: High-fidelity web scraper that retrieves grant data directly from official funding portals.
+Why: Generic web scraping using Google often misses new grants, so direct integration with Innovate UK, UKRI, and the European APIs is necessary.
+How: Uses regex, BeautifulSoup, and REST APIs to fetch robust semi-structured HTML/JSON data and standardises it into our schema.
+"""
 import os
 import re
 import json
@@ -71,8 +76,9 @@ def _extract_competition_id(url: str) -> str:
 
 def _is_quality_row(row: dict) -> bool:
     """
-    Quality gate: only pass rows that look like real competition entries.
-    Must have: a non-generic name, and AT LEAST ONE of a cost range or close date.
+    What: Pre-evaluation quality gate for scraped rows.
+    Why: Keeps generic pages (like 'EU Funding & Tenders Portal homepage') from clogging the alignment agent.
+    How: Evaluates the name against a generic title blacklist, checks string length, and asserts that at least one meaningful piece of context (close date or cost) is present.
     """
     name = row.get("Calls (+ ID Number)", "").strip().lower()
     cost = row.get("Total Eligible Cost", "").strip().lower()
@@ -104,11 +110,10 @@ def _is_quality_row(row: dict) -> bool:
 
 class StructuredScoutAgent:
     """
-    Quality-first scout that scrapes authoritative structured sources directly.
-    Sources:
-      1. Innovate UK IFS competition search (all pages)
-      2. UKRI Opportunities listing
-      3. Horizon Europe — targeted Serper queries for specific topic IDs
+    What: Agent class responsible for scraping raw opportunities.
+    Why: Centralises all raw network extraction logic into a single class before alignment logic applies.
+    How: Initialises an HTTP Session, hits predefined URLs or APIs, and returns an array of dicts adhering to the expected schema.
+    Scrapes Innovate UK IFS, UKRI, and Horizon Europe.
     """
 
     def __init__(self, target_urls, search_queries):
@@ -124,6 +129,11 @@ class StructuredScoutAgent:
     # ── PUBLIC ────────────────────────────────────────────────────────────────
 
     def fetch_opportunities(self):
+        """
+        What: Main public method coordinating the three scraping phases.
+        Why: Allows the orchestrator to fire one command and wait for a single combined array.
+        How: Iterates through discrete functions (IUK, UKRI, Horizon), merges the arrays, and runs the result through `_is_quality_row`.
+        """
         all_opps = []
 
         print("[Scout] Phase 1: Scraping Innovate UK IFS competition listings...")
@@ -145,6 +155,11 @@ class StructuredScoutAgent:
     # ── PHASE 1: INNOVATE UK IFS ──────────────────────────────────────────────
 
     def _scrape_iuk_ifs(self):
+        """
+        What: Scrapes the Innovate UK IFS "competition search" pages.
+        Why: Direct extraction prevents missing grants that haven't been indexed by Google yet.
+        How: Iterates through pagination (page 0-4), extracts target URLs from href tags, and passes them to the single-page scraper `_scrape_iuk_competition_page`.
+        """
         base = "https://apply-for-innovation-funding.service.gov.uk"
         results = []
 
@@ -332,6 +347,11 @@ class StructuredScoutAgent:
     # ── PHASE 2: UKRI OPPORTUNITIES ───────────────────────────────────────────
 
     def _scrape_ukri_opportunities(self):
+        """
+        What: Scrapes the UKRI primary opportunities list.
+        Why: UKRI acts as a secondary channel for significant UK innovation grants outside of IUK.
+        How: Looks for link nodes targeting `ukri.org/opportunity`, crawls them, and executes `_scrape_ukri_page`.
+        """
         results = []
         base_url = "https://www.ukri.org/opportunity/"
         try:
@@ -419,6 +439,11 @@ class StructuredScoutAgent:
     # ─────────────────────────────────────────────────────────────────────────────
 
     def _scrape_horizon_europe(self):
+        """
+        What: Queries the official EU Funding & Tenders REST API.
+        Why: Standard HTML scraping against EU portals is notoriously unstable. API access directly retrieves structured, authoritative JSON.
+        How: Converts strategic keywords to API params. Submits to the REST endpoint targeting grants (status Open/Forthcoming in Horizon Europe framework). Maps JSON output fields such as `startDate` and `deadlineDate` into standard dictionary keys.
+        """
         results = []
         import config
         # Use the NCC strategic keywords to intelligently search the EU portal natively

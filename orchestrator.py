@@ -1,3 +1,8 @@
+"""
+What: Main execution entry point that coordinates the grant discovery pipeline.
+Why: Centralises the workflow so that scraping, alignment, and data writing occur in a guaranteed, repeatable sequence.
+How: Instantiates the ScoutAgent to fetch raw opportunities, passes them systematically to the StrategyAlignmentAgent for filtering and enrichment, and finally merges surviving records into the Excel dashboard via Pandas.
+"""
 import pandas as pd
 import os
 import re
@@ -24,10 +29,20 @@ DASHBOARD_COLUMNS = [
 ]
 
 class ExcellenceOrchestrator:
+    """
+    What: Class governing the lifecycle of a single pipeline run.
+    Why: Encapsulates state (such as the target Excel path) and provides a clean interface (.run()) to execute the pipeline.
+    How: Uses sequential method calls to trigger downstream agents and manages the `_write_output` merging logic.
+    """
     def __init__(self, excel_path="Grant_Opportunities_Template_v2.xlsx"):
         self.excel_path = os.path.join(os.getcwd(), excel_path)
         
     def run(self):
+        """
+        What: The main orchestrator function.
+        Why: It serves as the primary controller, orchestrating the step-by-step grant tracking process.
+        How: Prints the config banner, triggers the scout agent, maps results to the alignment agent, and submits to local output.
+        """
         print("=" * 60)
         print("  GRANT STRATEGY MULTI-AGENT FRAMEWORK")
         print("=" * 60)
@@ -69,6 +84,11 @@ class ExcellenceOrchestrator:
         self._write_output(enriched)
         
     def _write_output(self, new_data):
+        """
+        What: Writes newly enriched grant opportunities to the Excel dashboard.
+        Why: Ensures we persist new discoveries while safely preserving historical "seed" data (hand-picked grants) and discarding scraped noise.
+        How: Loads the existing Excel logic into a Pandas DataFrame, concats the new records, runs de-duplication rules, applies a quality gate on scraped entries, and saves the file.
+        """
         print(f"\n[Orchestrator] Merging {len(new_data)} live opportunities with existing data...")
         
         # Load existing seed/historical data if the file exists
@@ -114,6 +134,8 @@ class ExcellenceOrchestrator:
         )
         
         # Sort by Status: Open → Upcoming → Forthcoming → remove Closed
+        # Why: Ensures the most actionable (Open/Upcoming) grants appear at the top of the Excel sheet.
+        # How: Maps string statuses to an integer (_sort) purely for robust dataframe sorting mechanics.
         # Apply quality gate: discard live rows where cost AND close date are both unknown
         status_order = {"Open": 0, "Upcoming": 1, "Forthcoming": 2, "Closed": 3, "Not specified": 4}
         combined["_sort"] = combined["Status"].map(status_order).fillna(4)

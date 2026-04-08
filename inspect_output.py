@@ -1,3 +1,8 @@
+"""
+What: CLI utility for rapidly validating the Excel dashboard's contents.
+Why: Opening Excel repeatedly during development is slow. This provides an instant summary of what the orchestrator produced.
+How: Uses Pandas to read the 'Opportunities Dashboard' sheet and prints formatted rows to stdout.
+"""
 import pandas as pd
 
 df = pd.read_excel("Grant_Opportunities_Template_v2.xlsx", sheet_name="Opportunities Dashboard")

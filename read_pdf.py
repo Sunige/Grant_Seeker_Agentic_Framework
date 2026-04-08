@@ -1,3 +1,8 @@
+"""
+What: A simple scratchpad utility.
+Why: Used historically to help extract the text payload from the NCC Strategy PDF so it could be fed into LLMs or converted into keyword lists.
+How: Leverages `pypdf.PdfReader` to extract and print text blocks page by page.
+"""
 from pypdf import PdfReader
 
 reader = PdfReader('d:\\Grant funded work\\ncc-technology-strategy-web.pdf')

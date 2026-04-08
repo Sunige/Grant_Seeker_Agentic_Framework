@@ -1,3 +1,8 @@
+"""
+What: Evaluates and filters scraped grant opportunities against the NCC's strategic goals.
+Why: Ensures that the final Excel dashboard only displays highly relevant, curated grants instead of a noisy mix of generic funding streams.
+How: Interfaces with an OpenRouter LLM (GPT-4o) using zero-shot classification to confirm alignment and extract clean metadata. If the API fails, it falls back to basic keyword matching.
+"""
 import os
 import json
 import re
@@ -39,9 +44,9 @@ def _infer_status(open_date_str: str, close_date_str: str) -> str:
 
 class StrategyAlignmentAgent:
     """
-    Evaluates each grant opportunity against NCC strategy.
-    Uses GPT-4o via OpenRouter when available; falls back to keyword matching.
-    Enforces quality: concise, factual SCOPE and Specific Outcome ≤ 20 words each.
+    What: Class orchestrating the strategic validation logic.
+    Why: By isolating strategy checks from web scraping logic (scout), the system remains modular.
+    How: Evaluates each grant opportunity against NCC strategy. Uses GPT-4o via OpenRouter when available; falls back to keyword matching. Enforces quality: concise, factual SCOPE and Specific Outcome <= 20 words each.
     """
 
     def __init__(self, ncc_keywords, target_companies):
@@ -49,6 +54,11 @@ class StrategyAlignmentAgent:
         self.target_companies = target_companies
 
     def evaluate_opportunity(self, opportunity_data):
+        """
+        What: The primary evaluation method called per grant.
+        Why: Decides whether to invoke the high-quality LLM pipeline or fall back to keyword logic.
+        How: Extracts the scope and URL, checks for an API key, and routes to either `_call_openrouter` or `_fallback_match`.
+        """
         scope = opportunity_data.get("SCOPE (Official)", "")
         call_name = opportunity_data.get("Calls (+ ID Number)", "")
         scope_for_llm = scope[:3000]
@@ -62,6 +72,11 @@ class StrategyAlignmentAgent:
     # ── LLM PATH ──────────────────────────────────────────────────────────────
 
     def _call_openrouter(self, data, scope, call_name, api_key):
+        """
+        What: Queries an LLM via OpenRouter.
+        Why: LLMs natively understand semantic nuance, meaning they can detect a grant's relevance to 'Composites' even if exact keywords are poorly phrased.
+        How: Sends a rigid JSON structured prompt containing the `scope` and asks for a Yes/No boolean on `Aligned`, plus tightly formatted summaries.
+        """
         client = OpenAI(base_url="https://openrouter.ai/api/v1", api_key=api_key)
 
         prompt = f"""You are a grant analyst for the National Composites Centre (NCC), a UK Research & Technology Organisation specialising in composite materials and advanced manufacturing.
@@ -113,6 +128,9 @@ Return ONLY a JSON object with these EXACT keys:
             result = json.loads(response.choices[0].message.content)
 
             # --- alignment Check ---
+            # What: Evaluates boolean output from LLM.
+            # Why: So we drop entirely irrelevant grants from our resulting dashboard before saving them.
+            # How: If Aligned is explicitly 'No', we return None.
             if result.get("Aligned", "No").strip() == "No":
                 # Drop this entirely
                 return None
@@ -149,6 +167,11 @@ Return ONLY a JSON object with these EXACT keys:
     # ── FALLBACK PATH ────────────────────────────────────────────────────────
 
     def _fallback_match(self, data, scope, call_name):
+        """
+        What: Failsafe evaluation using literal text parsing.
+        Why: Ensures the pipeline does not stop running if OpenRouter API credits dry up or the network fails.
+        How: Concatenates scope/title, lowercases them, and checks for substrings from `ncc_keywords`.
+        """
         combined = (scope + " " + call_name).lower()
         matched_kws = [kw for kw in self.ncc_keywords if kw.lower() in combined]
 
