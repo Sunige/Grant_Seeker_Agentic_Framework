@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="auto" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" style="background-color: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; padding: 20px;">
+  <!-- Styles -->
+  <style>
+    .node { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 14px; text-anchor: middle; }
+    .label { font-weight: bold; fill: #1e293b; }
+    .sub-label { font-size: 11px; fill: #64748b; }
+    .box { fill: #ffffff; stroke: #3b82f6; stroke-width: 2; rx: 8; ry: 8; }
+    .edge { stroke: #94a3b8; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+    .external { fill: #f3f4f6; stroke: #94a3b8; }
+    .agent { fill: #eff6ff; stroke: #2563eb; }
+    .highlight { fill: #fef3c7; stroke: #d97706; }
+  </style>
+
+  <!-- Markers -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8" />
+    </marker>
+  </defs>
+
+  <!-- External Influences -->
+  <g transform="translate(500, 40)">
+    <circle cx="0" cy="0" r="15" class="external" />
+    <text y="30" class="node label">User</text>
+  </g>
+
+  <!-- Core Intelligence -->
+  <g transform="translate(500, 150)">
+    <circle cx="0" cy="0" r="45" class="agent" />
+    <text y="5" class="node label">Orchestrator</text>
+    <text y="20" class="node sub-label">(orchestrator.py)</text>
+  </g>
+
+  <!-- Scouts and Aligners -->
+  <g transform="translate(300, 300)">
+    <rect x="-80" y="-30" width="160" height="60" class="agent" />
+    <text y="0" class="node label">Scout Agent</text>
+    <text y="15" class="node sub-label">(scout_agent.py)</text>
+  </g>
+
+  <g transform="translate(700, 300)">
+    <rect x="-80" y="-30" width="160" height="60" class="agent" />
+    <text y="0" class="node label">Alignment Agent</text>
+    <text y="15" class="node sub-label">(alignment_agent.py)</text>
+  </g>
+
+  <!-- Discovery and Config -->
+  <g transform="translate(100, 150)">
+    <rect x="-60" y="-25" width="120" height="50" class="highlight" />
+    <text y="5" class="node label">config.py</text>
+  </g>
+
+  <g transform="translate(100, 300)">
+    <rect x="-80" y="-30" width="160" height="60" class="box" stroke-dasharray="5,5" />
+    <text y="0" class="node label">Discovery Agent</text>
+    <text y="15" class="node sub-label">(discovery_agent.py)</text>
+  </g>
+
+  <!-- Output -->
+  <g transform="translate(500, 500)">
+    <rect x="-100" y="-30" width="200" height="60" class="box" style="fill: #fdf2f8; stroke: #db2777;" />
+    <text y="0" class="node label">Excel Dashboard</text>
+    <text y="15" class="node sub-label">(Grant_Opportunities.xlsx)</text>
+  </g>
+
+  <!-- Connections -->
+  <!-- User to Orchestrator -->
+  <path d="M 500 70 L 500 100" class="edge" />
+  
+  <!-- Orchestrator to Scout -->
+  <path d="M 455 160 L 300 265" class="edge" />
+  
+  <!-- Scout to Orchestrator -->
+  <path d="M 320 265 L 455 180" class="edge" stroke-dasharray="4,2" />
+
+  <!-- Orchestrator to Alignment -->
+  <path d="M 545 160 L 700 265" class="edge" />
+  
+  <!-- Alignment to Orchestrator -->
+  <path d="M 680 265 L 545 180" class="edge" stroke-dasharray="4,2" />
+
+  <!-- Orchestrator to Excel -->
+  <path d="M 500 195 L 500 465" class="edge" />
+
+  <!-- Discovery to Config -->
+  <path d="M 100 270 L 100 180" class="edge" />
+
+  <!-- Orchestrator to Discovery -->
+  <path d="M 455 150 L 165 150" class="edge" stroke-dasharray="4,2" />
+
+</svg>

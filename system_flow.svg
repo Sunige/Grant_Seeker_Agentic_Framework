@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="3144" height="1090" viewBox="-91 -121 3144 1090">
+  <rect x="-91" y="-121" width="3144" height="1090" fill="#FFFFFF" />
+  <style>/* Internal styles for diagram elements */ .text { font-family: sans-serif; } .shape { stroke: #0D32B2; stroke-width: 2px; }</style>
+  <g class="User"><path d="M 2067 187 H 2019 V 186 C 2019 175 2024 165 2033 160 C 2028 156 2025 149 2025 142 C 2025 131 2033 121 2043 121 C 2053 121 2061 131 2061 142 C 2061 149 2058 155 2054 159 C 2062 164 2068 174 2068 185 V 186 H 2067 Z" stroke="#0D32B2" fill="#E3E9FD" /><text x="2043" y="208" fill="#0A0F25" style="text-anchor:middle;font-weight:bold;">User</text></g>
+  <g class="CoreDataConfig"><rect x="10" y="86" width="538" height="136" stroke="#0D32B2" fill="#E3E9FD" /><text x="279" y="73" fill="#0A0F25" style="text-anchor:middle;font-size:28px">Core Data &amp; Config</text></g>
+  <g class="IntelligenceEngine"><rect x="588" y="20" width="977" height="267" stroke="#0D32B2" fill="#E3E9FD" /><text x="1076" y="7" fill="#0A0F25" style="text-anchor:middle;font-size:28px">The Intelligence Engine</text></g>
+  <g class="Results"><rect x="1605" y="86" width="286" height="136" stroke="#0D32B2" fill="#E3E9FD" /><text x="1748" y="73" fill="#0A0F25" style="text-anchor:middle;font-size:28px">The Results</text></g>
+  <g class="Orchestrator"><rect x="1874" y="428" width="138" height="66" stroke="#0D32B2" fill="#F7F8FE" /><text x="1943" y="466" fill="#0A0F25" style="text-anchor:middle;font-weight:bold;">Orchestrator</text></g>
+  <g class="Config"><rect x="1353" y="802" width="92" height="66" stroke="#0D32B2" fill="#F7F8FE" /><text x="1399" y="840" fill="#0A0F25" style="text-anchor:middle;font-weight:bold;">Config</text></g>
+  <g class="Env"><rect x="1087" y="615" width="71" height="66" stroke="#0D32B2" fill="#F7F8FE" /><text x="1122" y="653" fill="#0A0F25" style="text-anchor:middle;font-weight:bold;">Env</text></g>
+  <g class="Discovery"><rect x="1441" y="615" width="115" height="66" stroke="#0D32B2" fill="#F7F8FE" /><text x="1498" y="653" fill="#0A0F25" style="text-anchor:middle;font-weight:bold;">Discovery</text></g>
+  <g class="Scout"><rect x="1792" y="615" width="86" height="66" stroke="#0D32B2" fill="#F7F8FE" /><text x="1835" y="653" fill="#0A0F25" style="text-anchor:middle;font-weight:bold;">Scout</text></g>
+  <g class="Alignment"><rect x="2680" y="615" width="120" height="66" stroke="#0D32B2" fill="#F7F8FE" /><text x="2740" y="653" fill="#0A0F25" style="text-anchor:middle;font-weight:bold;">Alignment</text></g>
+  <g class="Excel"><rect x="2249" y="615" width="82" height="66" stroke="#0D32B2" fill="#F7F8FE" /><text x="2290" y="653" fill="#0A0F25" style="text-anchor:middle;font-weight:bold;">Excel</text></g> 
+  <g class="Connections">
+    <path d="M 2043 208 L 1943 428" stroke="#0D32B2" fill="none" class="connection" style="stroke-width:2;" />
+    <path d="M 1943 494 L 1399 802" stroke="#0D32B2" fill="none" class="connection" style="stroke-width:2;" />
+    <path d="M 1943 494 L 1122 615" stroke="#0D32B2" fill="none" class="connection" style="stroke-width:2;" />
+    <path d="M 1943 494 L 1498 615" stroke="#0D32B2" fill="none" class="connection" style="stroke-width:2;" />
+    <path d="M 1943 494 L 1835 615" stroke="#0D32B2" fill="none" class="connection" style="stroke-width:2;" />
+  </g>
+</svg>

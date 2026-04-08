@@ -1,0 +1,46 @@
+direction: right
+
+Agent Manager: {
+  shape: component
+  style: {
+    fill: "#e2e8f0"
+    stroke: "#475569"
+    border-radius: 5
+  }
+}
+
+rules.md: {
+  shape: document
+  tooltip: Global constraints and instructions
+  style: {
+    fill: "#fef08a"
+    stroke: "#ca8a04"
+  }
+}
+
+skills/: {
+  shape: package
+  tooltip: Specialized capabilities
+  style: {
+    fill: "#bfdbfe"
+    stroke: "#2563eb"
+  }
+
+  skill_A_module: {
+    shape: component
+  }
+  
+  skill_B_module: {
+    shape: component
+  }
+}
+
+# Interactions
+rules.md -> Agent Manager: Defines core policies and guardrails
+Agent Manager -> rules.md: Reads constraints on initialization
+
+Agent Manager -> skills/: Discovers available skills
+skills/ -> Agent Manager: Returns list of capabilities
+
+Agent Manager -> skills/.skill_A_module: Invokes specialized function
+skills/.skill_A_module -> Agent Manager: Returns parsed/processed data

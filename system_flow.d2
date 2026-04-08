@@ -1,0 +1,108 @@
+direction: down
+
+# External Influences
+User: {
+  shape: person
+  near: Orchestrator
+}
+
+# The Files
+subgraph "Core Data & Config" {
+  Config: "config.py" {
+    shape: page
+    tooltip: "Target URLs, Queries, Keywords"
+    style: {
+      fill: "#fef3c7"
+      stroke: "#d97706"
+    }
+  }
+  Env: ".env" {
+    shape: page
+    tooltip: "API Keys (Serper, OpenRouter)"
+    style: {
+      fill: "#fef3c7"
+      stroke: "#d97706"
+    }
+  }
+  StrategyPDF: "NCC Strategy PDF" {
+    shape: document
+    tooltip: "Source of Truth for Strategic Alignment"
+    style: {
+      fill: "#fee2e2"
+      stroke: "#dc2626"
+    }
+  }
+}
+
+subgraph "The Intelligence Engine" {
+  Orchestrator: "orchestrator.py" {
+    shape: circle
+    tooltip: "Main Entry Point & Flow Manager"
+    style: {
+      fill: "#dbeafe"
+      stroke: "#2563eb"
+      stroke-width: 4
+    }
+  }
+
+  Scout: "scout_agent.py" {
+    shape: rectangle
+    tooltip: "Searches & Scrapes Live Grant Data"
+    style: {
+      fill: "#dcfce7"
+      stroke: "#16a34a"
+    }
+  }
+
+  Alignment: "alignment_agent.py" {
+    shape: rectangle
+    tooltip: "Checks Compatibility with NCC Strategy"
+    style: {
+      fill: "#dcfce7"
+      stroke: "#16a34a"
+    }
+  }
+
+  Discovery: "discovery_agent.py" {
+    shape: rectangle
+    tooltip: "Finds NEW permanent grant portals"
+    style: {
+      fill: "#f3f4f6"
+      stroke: "#4b5563"
+      stroke-dash: 5
+    }
+  }
+}
+
+subgraph "The Results" {
+  Excel: "Grant_Opportunities.xlsx" {
+    shape: document
+    tooltip: "The Final Dashboard"
+    style: {
+      fill: "#fce7f3"
+      stroke: "#db2777"
+    }
+  }
+}
+
+# Flow of Information
+User -> Orchestrator: Runs Script
+Orchestrator -> Config: Reads Target URLs & Keywords
+Orchestrator -> Env: Loads API Keys
+
+Orchestrator -> Discovery: (Optional) Scan for NEW sources
+Discovery -> Config: Updates permanent URL list
+
+Orchestrator -> Scout: Request live search/scrape
+Scout -> "Internet (Google/IUK/EU)": Live Fetching
+"Internet (Google/IUK/EU)" -> Scout: Raw HTML / Web Results
+Scout -> Orchestrator: Returns Raw Opportunity JSON
+
+Orchestrator -> Alignment: Send raw data for evaluation
+StrategyPDF -> Alignment: Provides criteria (via text extraction)
+Alignment -> "LLM (GPT-4)": Strategic Reasoning
+"LLM (GPT-4)" -> Alignment: JSON (Yes/No + Refined Text)
+Alignment -> Orchestrator: Returns Filtered & Enriched JSON
+
+Orchestrator -> Excel: Merges, Deduplicates, and Writes results
+Excel -> User: Final Actionable Dashboard
