@@ -13,7 +13,7 @@ from scout_agent import ScoutAgent
 from alignment_agent import StrategyAlignmentAgent
 from discovery_agent import DiscoveryAgent
 
-from config import TARGET_URLS, SEARCH_QUERIES, NCC_STRATEGIC_KEYWORDS, TARGETED_COMPANIES
+from config import TARGET_URLS, SEARCH_QUERIES, STRATEGIC_KEYWORDS, TARGETED_COMPANIES
 
 # New column schema (matches user-facing dashboard)
 DASHBOARD_COLUMNS = [
@@ -47,7 +47,7 @@ class ExcellenceOrchestrator:
         print("  GRANT STRATEGY MULTI-AGENT FRAMEWORK")
         print("=" * 60)
         print(f"  Config: {len(TARGET_URLS)} URLs | {len(SEARCH_QUERIES)} queries")
-        print(f"  Keywords: {len(NCC_STRATEGIC_KEYWORDS)} | Companies: {len(TARGETED_COMPANIES)}")
+        print(f"  Keywords: {len(STRATEGIC_KEYWORDS)} | Companies: {len(TARGETED_COMPANIES)}")
         print("=" * 60)
 
         # Step 0: Discovery Agent (disabled — StructuredScoutAgent scrapes sources directly)
@@ -64,11 +64,11 @@ class ExcellenceOrchestrator:
             return
         
         # Step 2: Alignment Agent
-        aligner = StrategyAlignmentAgent(NCC_STRATEGIC_KEYWORDS, TARGETED_COMPANIES)
+        aligner = StrategyAlignmentAgent(STRATEGIC_KEYWORDS, TARGETED_COMPANIES)
         enriched = []
         
         total = len(raw_opportunities)
-        print(f"\n[Orchestrator] Evaluating {total} opportunities against NCC Technology Strategy...")
+        print(f"\n[Orchestrator] Evaluating {total} opportunities against Target Technology Strategy...")
         for i, opp in enumerate(raw_opportunities):
             opp_name = opp.get('Calls (+ ID Number)', opp.get('Name of the call', ''))[:60]
             print(f"  [{i+1}/{total}] {opp_name}...")
@@ -178,7 +178,7 @@ class ExcellenceOrchestrator:
                     "3. Run: python orchestrator.py",
                     "4. The Discovery Agent searches for new grant portals and adds them to config.py.",
                     "5. The Scout Agent searches Google (via Serper) and scrapes each page for dates and funding info.",
-                    "6. The Alignment Agent evaluates each call against NCC strategy (via OpenRouter LLM or keyword fallback).",
+                    "6. The Alignment Agent evaluates each call against Target strategy (via OpenRouter LLM or keyword fallback).",
                     "7. Results are merged with existing rows and written to the 'Opportunities Dashboard' tab.",
                     "8. Re-run weekly to pick up new calls. Existing calls are deduplicated automatically.",
                 ]

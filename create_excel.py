@@ -160,7 +160,7 @@ instructions = pd.DataFrame({
         "3. Run: python orchestrator.py",
         "4. The Discovery Agent searches for new grant portals and adds them to config.py.",
         "5. The Scout Agent searches Google (via Serper) and scrapes each page for dates and funding info.",
-        "6. The Alignment Agent evaluates each call against NCC strategy (via OpenRouter LLM or keyword fallback).",
+        "6. The Alignment Agent evaluates each call against Target strategy (via OpenRouter LLM or keyword fallback).",
         "7. Results are written to the 'Opportunities Dashboard' tab.",
         "8. Re-run weekly to pick up new calls. Existing calls are deduplicated automatically.",
         "",

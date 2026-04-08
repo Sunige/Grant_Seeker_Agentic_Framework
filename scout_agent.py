@@ -446,8 +446,8 @@ class StructuredScoutAgent:
         """
         results = []
         import config
-        # Use the NCC strategic keywords to intelligently search the EU portal natively
-        api_queries = config.NCC_STRATEGIC_KEYWORDS
+        # Use the Target Organisation strategic keywords to intelligently search the EU portal natively
+        api_queries = config.STRATEGIC_KEYWORDS
         if not api_queries:
             # Fallback if config is empty
             api_queries = ["advanced manufacturing", "composites", "clean energy"]

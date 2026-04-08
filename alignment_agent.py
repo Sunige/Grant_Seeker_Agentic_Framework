@@ -1,5 +1,5 @@
 """
-What: Evaluates and filters scraped grant opportunities against the NCC's strategic goals.
+What: Evaluates and filters scraped grant opportunities against the the Target Organisation's strategic goals.
 Why: Ensures that the final Excel dashboard only displays highly relevant, curated grants instead of a noisy mix of generic funding streams.
 How: Interfaces with an OpenRouter LLM (GPT-4o) using zero-shot classification to confirm alignment and extract clean metadata. If the API fails, it falls back to basic keyword matching.
 """
@@ -46,11 +46,11 @@ class StrategyAlignmentAgent:
     """
     What: Class orchestrating the strategic validation logic.
     Why: By isolating strategy checks from web scraping logic (scout), the system remains modular.
-    How: Evaluates each grant opportunity against NCC strategy. Uses GPT-4o via OpenRouter when available; falls back to keyword matching. Enforces quality: concise, factual SCOPE and Specific Outcome <= 20 words each.
+    How: Evaluates each grant opportunity against Target strategy. Uses GPT-4o via OpenRouter when available; falls back to keyword matching. Enforces quality: concise, factual SCOPE and Specific Outcome <= 20 words each.
     """
 
-    def __init__(self, ncc_keywords, target_companies):
-        self.ncc_keywords = ncc_keywords
+    def __init__(self, strategic_keywords, target_companies):
+        self.strategic_keywords = strategic_keywords
         self.target_companies = target_companies
 
     def evaluate_opportunity(self, opportunity_data):
@@ -79,10 +79,10 @@ class StrategyAlignmentAgent:
         """
         client = OpenAI(base_url="https://openrouter.ai/api/v1", api_key=api_key)
 
-        prompt = f"""You are a grant analyst for the National Composites Centre (NCC), a UK Research & Technology Organisation specialising in composite materials and advanced manufacturing.
+        prompt = f"""You are a grant analyst for the Target Organisation, a UK Research & Technology Organisation specialising in composite materials and advanced manufacturing.
 
-NCC TECHNOLOGY STRATEGY:
-The NCC exclusively pursues grants within:
+Target Organisation TECHNOLOGY STRATEGY:
+The Target Organisation exclusively pursues grants within:
 Sectors: Aerospace, Defence, Energy.
 Themes: Advanced Materials, Hypersonics, Ceramics, Recycling, Composite/Metallic Processes, Production Systems, Systems Engineering, Design & Test, Circularity (Hydrogen storage, Wind blades), Autonomous Systems, and Digital Engineering/Twins.
 
@@ -116,7 +116,7 @@ Return ONLY a JSON object with these EXACT keys:
   "Link": "Keep the URL already provided.",
   "SCOPE (Official)": "EXACTLY one factual sentence of max 20 words extracted from the official brief. Must describe what funded projects must DO, not what exists.",
   "Specific Outcome": "EXACTLY one measurable sentence of max 20 words describing the target deliverable. Must be specific and quantifiable.",
-  "Aligned": "EXACTLY 'Yes' or 'No'. Is this grant opportunity aligned with the NCC Technology Strategy themes?"
+  "Aligned": "EXACTLY 'Yes' or 'No'. Is this grant opportunity aligned with the Target Technology Strategy themes?"
 }}"""
 
         try:
@@ -170,17 +170,17 @@ Return ONLY a JSON object with these EXACT keys:
         """
         What: Failsafe evaluation using literal text parsing.
         Why: Ensures the pipeline does not stop running if OpenRouter API credits dry up or the network fails.
-        How: Concatenates scope/title, lowercases them, and checks for substrings from `ncc_keywords`.
+        How: Concatenates scope/title, lowercases them, and checks for substrings from `strategic_keywords`.
         """
         combined = (scope + " " + call_name).lower()
-        matched_kws = [kw for kw in self.ncc_keywords if kw.lower() in combined]
+        matched_kws = [kw for kw in self.strategic_keywords if kw.lower() in combined]
 
         if len(matched_kws) >= 3:
-            outcome = f"HIGH NCC alignment – matched: {', '.join(matched_kws[:5])}."
+            outcome = f"HIGH Target alignment – matched: {', '.join(matched_kws[:5])}."
         elif len(matched_kws) >= 1:
-            outcome = f"MEDIUM NCC alignment – matched: {', '.join(matched_kws)}."
+            outcome = f"MEDIUM Target alignment – matched: {', '.join(matched_kws)}."
         else:
-            outcome = "LOW alignment – no direct NCC keyword match; manual review needed."
+            outcome = "LOW alignment – no direct Target keyword match; manual review needed."
 
         # Trim outcome to ~100 chars
         if len(outcome) > 100:

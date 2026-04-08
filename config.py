@@ -1,7 +1,7 @@
 """
 What: Central configuration file for the Grant Discovery framework.
 Why: Separating these lists makes it safe and easy for non-technical users to update URLs, search domains, and strategic keywords without risking changes to the core application logic.
-How: Agents import these constants and iterate over them (e.g. alignment_agent uses NCC_STRATEGIC_KEYWORDS, scout_agent uses URLs and queries).
+How: Agents import these constants and iterate over them (e.g. alignment_agent uses STRATEGIC_KEYWORDS, scout_agent uses URLs and queries).
 """
 
 # TARGET_URLS list
@@ -31,11 +31,11 @@ SEARCH_QUERIES = [
     "DASA open call innovation 2026 site:gov.uk",
 ]
 
-# NCC_STRATEGIC_KEYWORDS list
-# What: A comprehensive list of technical domains and themes representing NCC's Strategic Pathways.
-# Why: Evaluates whether a scraped grant is actually relevant to the NCC, filtering out noise.
+# STRATEGIC_KEYWORDS list
+# What: A comprehensive list of technical domains and themes representing the Target Organisation's Strategic Pathways.
+# Why: Evaluates whether a scraped grant is actually relevant to the Target Organisation, filtering out noise.
 # How: Used by the StrategyAlignmentAgent. The code checks scraped grant titles and scope for matches against these exact phrases.
-NCC_STRATEGIC_KEYWORDS = [
+STRATEGIC_KEYWORDS = [
     "Advanced Materials",
     "Composites",
     "Ceramic Matrix Composites",
@@ -74,7 +74,7 @@ NCC_STRATEGIC_KEYWORDS = [
 ]
 
 # TARGETED_COMPANIES list
-# What: A list of major industry players and key partners associated with NCC domains.
+# What: A list of major industry players and key partners associated with Target domains.
 # Why: Allows the platform to later flag grants if they mention these high-value partners.
 # How: Passed to the StrategyAlignmentAgent to detect corporate presence in the grant calls.
 TARGETED_COMPANIES = [
